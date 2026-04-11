@@ -23,11 +23,11 @@ export default function Hero() {
 
 
     const trustedLogosText = [
-        'Startups',
-        'Scale-ups',
-        'Founders',
-        'Global teams',
-        'Creative brands'
+        'Adobe',
+        'Figma',
+        'Canva',
+        'Shopify',
+        'Webflow'
     ];
 
 
@@ -109,9 +109,9 @@ export default function Hero() {
                                 <div className="flex items-center gap-2 p-2 px-3 sm:px-6.5 hover:bg-white/3 transition-colors">
                                     <ZapIcon className="size-4 text-sky-500" />
                                     <div>
-                                        <div>Strategy-led execution</div>
+                                        <div>Seconds to create </div>
                                         <div className="text-xs text-gray-400">
-                                            Focused on growth & results
+                                           Optimized social formats
                                         </div>
                                     </div>
                                 </div>
@@ -121,9 +121,9 @@ export default function Hero() {
                                 <div className="flex items-center gap-2 p-2 px-3 sm:px-6.5 hover:bg-white/3 transition-colors">
                                     <CheckIcon className="size-4 text-cyan-500" />
                                     <div>
-                                        <div>Full-service delivery</div>
+                                        <div>Commercial rights</div>
                                         <div className="text-xs text-gray-400">
-                                            Design, dev & marketing
+                                            Use anywhere , no fuss
                                         </div>
                                     </div>
                                 </div>
@@ -146,13 +146,13 @@ export default function Hero() {
                                     />
 
                                     <div className="absolute left-4 top-4 px-3 py-1 rounded-full bg-black/15 backdrop-blur-sm text-xs">
-                                        Branding • Web • Growth
+                                        Social-ready * 9:16 & 16.9
                                     </div>
 
                                     <div className="absolute right-4 bottom-4">
                                         <button className="inline-flex items-center gap-2 rounded-full px-4 py-2 bg-white/6 backdrop-blur-sm hover:bg-white/10 transition focus:outline-none">
                                             <PlayIcon className="size-4" />
-                                            <span className="text-xs">See case study</span>
+                                            <span className="text-xs">Preview</span>
                                         </button>
                                     </div>
                                 </div>
@@ -186,7 +186,7 @@ export default function Hero() {
 
                                         <span className="relative inline-flex size-2 rounded-full bg-green-600" />
                                     </div>
-                                    20+ completed projects
+                                  =20 More
                                 </motion.div>
                             </div>
                         </motion.div>
