@@ -20,11 +20,11 @@ const Generator = () => {
 
     const [isGenerating , setIsGenerating] = useState(false)
 
-    // const handleFileChange = (e :React.ChangeEvent<HTMLInputElement>,type:'product' | 'model')=>{
-    //     if(e.target.files && e.target.files[0]){
-    //         if(type === 'product') setProductImage
-    //     }
-    // }
+    const handleFileChange = (e :React.ChangeEvent<HTMLInputElement>,type:'product' | 'model')=>{
+        if(e.target.files && e.target.files[0]){
+            if(type === 'product') setProductImage
+        }
+    }
 
   return (
     <div className="min-h-screen text-white p-6 md:p-12 mt-28">
