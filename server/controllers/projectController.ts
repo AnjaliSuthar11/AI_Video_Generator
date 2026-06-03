@@ -6,6 +6,8 @@ import {GenerateContentConfig,HarmBlockThreshold,HarmCategory} from "@google/gen
 
 import fs from "fs"
 import path from "path"
+import axios from "axios"
+import ai from "../configs/ai.js";
 
 const loadImage = (path:string,mimeType:string)=>{
     return {
@@ -195,10 +197,71 @@ export const createVideo = async (req:Request,res:Response)=>{
     //deduct credits for video generation 
     await prisma.user.update({
         where:{id : userId},
-        data:{credits:{decrement : 1}}
-    })
-    try{
+        data:{credits:{decrement : 10}}
+    }).then(()=>{
+        isCreditDeducted=true
+    });
 
+    try{
+        const project = await prisma.project.findUnique({
+            where:{id:projectId,userId},
+            include:{user:true}
+    })
+
+    if(!project || project.isGenerating){
+        return res.status(404).json({message:'Generation in progress'})
+    }
+
+    if(project.generatedVideo){
+        return res.status(404).json({message:'video already generated'})
+    }
+
+    await prisma.project.update({
+        where:{id:projectId},
+        data:{isGenerating:true}
+    })
+    
+    const prompt = `make the person showcase the product which is ${project.productName} ${project.productDescription && `and Product Description: ${project.productDescription}`}`
+
+    const model = 'veo-3.1-generate-preview'
+
+    if(!project.generatedImage){
+        throw new Error('Generated image not found')
+    }
+
+    const image = await axios.get(project.generatedImage,{
+        responseType:'arraybuffer',
+    })
+
+    const imageBytes : any= Buffer.from(image.data)
+
+    let operation : any = await ai.models.generateVideos({
+        model,
+        prompt,
+        image:{
+            imageBytes:imageBytes.toString('base64'),
+            mimeType:'image/png',
+        },
+        config:{
+            aspectRatio:project?.aspectRatio || '9:16',
+            numberOfVideos:1,
+            resolution:'720p'
+        }
+    })
+
+    while(!operation.done){
+        console.log('waiting for video generating to complete..');
+        await new Promise((resolve)=>setTimeout(resolve,10000));
+        operation= await ai.operations.getVideosOperation({
+            operation:operation
+        })
+    }
+
+    const filename=`${userId} - ${Date.now()}.mp4`;
+    const filePath = path.join('videos',filename)
+
+    //create the images directory if it doesnt exist
+    
 
 
     }catch(error:any){
