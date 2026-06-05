@@ -57,7 +57,9 @@ export const getProjectById = async (req:Request,res:Response)=>{
 
  
     const project = await prisma.project.findUnique({
-        where:{id:projectId,userId},
+        where:{
+            id:projectId,
+            userId},
       
     })
 
