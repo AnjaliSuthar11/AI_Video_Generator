@@ -12,6 +12,7 @@ import { PrimaryButton } from "../components/Buttons";
 import { useAuth, useUser } from "@clerk/react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import api from "../configs/axios";
 
 
 const Generator = () => {
@@ -63,11 +64,21 @@ const Generator = () => {
           formData.append('userPrompt',userPrompt)
           formData.append('aspectRatio',aspectRatio)
           formData.append('images',productImage)
-          
-        }
-        catch(error)
-        {
+          formData.append('images',modelImage)
 
+          const token = await getToken()
+
+          const {data} = await api.post('/api/project/create',formData,{
+            headers:{Authorization:`Bearer ${token}`}
+          })
+
+          toast.success(data.message)
+          navigate('/result/' + data.projectId)
+        }
+        catch(error:any)
+        {
+          setIsGenerating(false);
+          toast.error(error?.response?.data?.message || error.message)
         }
   };
 
