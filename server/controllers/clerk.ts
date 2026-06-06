@@ -4,10 +4,10 @@ import { prisma } from "../configs/prisma.js";
 import * as Sentry from "@sentry/node";
 
 const clerkWebhooks = async( req:Request,res:Response )=>{
-
+ console.log("WEBHOOK HIT");
     try{
     const evt = await verifyWebhook(req)
-
+ console.log("EVENT TYPE:", evt.type);
     // getting data from request
 
     const {data,type} = evt;
@@ -51,6 +51,8 @@ const clerkWebhooks = async( req:Request,res:Response )=>{
 
         }
         case "paymentAttempt.updated":{
+              console.log("PAYMENT WEBHOOK RECEIVED");
+  console.log(data);
             if((data.charge_type === "recurring" ||data.charge_type === "checkout" ) && data.status === "paid"){
                 const credits = {pro:80,premium:240}
 
@@ -63,13 +65,15 @@ const clerkWebhooks = async( req:Request,res:Response )=>{
                 if(planId !== "pro" && planId !== "premium"){
                     return res.status(400).json({message:"invalid plan"})
                 }
-                console.log(planId)
+               console.log("Plan ID:", planId);
+console.log("Clerk User ID:", clerkUserId);
 
-                await prisma.user.update({
+   const updatedUser=   await prisma.user.update({
                     where:{
                     id:clerkUserId, },
                     data:{ credits:{increment:credits[planId]}}                   
                 })
+                console.log("Updated user:", updatedUser);
             }
             break;
 
