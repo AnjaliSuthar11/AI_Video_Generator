@@ -3,23 +3,59 @@ import type { Project } from "../types"
 import { dummyGenerations } from "../assets/assets"
 import { ImageIcon, Link, Loader2Icon, RefreshCcwIcon, Sparkle, SparkleIcon, VideoIcon } from "lucide-react"
 import { GhostButton, PrimaryButton } from "../components/Buttons"
+import { useNavigate, useParams } from "react-router-dom"
+import { useAuth, useUser } from "@clerk/react"
+import api from "../configs/axios"
+import toast from "react-hot-toast"
 
 
 const Result = () => {
+
+  const {projectId}=useParams()
+
+  const {getToken}=useAuth()
+
+  const {user , isLoaded} = useUser()
+
+  const navigate = useNavigate()
+
   const [project,setProjectData] = useState<Project>({} as Project)
 
   const [loading,setLoading]=useState(true)
   const [isGenerating,setIsGenerating]=useState(false)
 
   const fetchProjectData = async ()=>{
-    setTimeout(()=>{
-      setProjectData(dummyGenerations[0]);
+    // setTimeout(()=>{
+    //   setProjectData(dummyGenerations[0]);
+    //   setLoading(false)
+    // },3000)
+    try{
+      const token = await getToken()
+      const {data}= await api.get(`/api/user/projects/${projectId}`,{
+          headers:{Authorization:`Bearer ${token}`}
+      })
+      setProjectData(data.project)
+      setIsGenerating(data.project.isGenerating)
       setLoading(false)
-    },3000)
+    }catch(error:any){
+        toast.error(error?.response?.data?.message || error.messsage);
+        console.log(error)
+    }
   }
 
   const handleGenerateVideo = async ()=>{
     setIsGenerating(true)
+    try{
+      const token = await getToken();
+      const {data}= await api.post('/api/project/video',{projectId},{
+        headers:{Authorization:`Bearer ${token}`}
+      })
+      setProjectData(prev => ({...prev,generatedVideo:data.videoUrl,isGenerating:false }))
+
+    }catch(error:any){
+      toast.error(error?.response?.data?.message || error.message);
+      console.log(error)
+    }
   }
 
   useEffect(()=>{
