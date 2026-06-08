@@ -28,11 +28,24 @@ export const createProject = async (req:Request,res:Response)=>{
     const { name='New Project', aspectRatio,userPrompt,productName,productDescription,targetLength = 5 } = req.body;
 
     const images:any = req.files;
+console.log("req.files =", req.files);
+console.log("images =", images);
+console.log("images length =", images?.length);
+console.log("productName =", productName);
 
-    if(images.length < 2 || !productName){
-        return res.status(400).json({message: 'please upload at least 2 images'})
-    }
+if (!images || images.length < 2) {
+  return res.status(400).json({
+    message: `Need 2 images. Received ${
+      images ? images.length : 0
+    }`
+  });
+}
 
+if (!productName) {
+  return res.status(400).json({
+    message: "Product name missing"
+  });
+}
     const user = await prisma.user.findUnique({
         where:{id:userId}
     })

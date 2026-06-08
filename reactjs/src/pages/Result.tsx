@@ -52,6 +52,8 @@ const Result = () => {
       })
       setProjectData(prev => ({...prev,generatedVideo:data.videoUrl,isGenerating:false }))
 
+      toast.success(data.message)
+
     }catch(error:any){
       toast.error(error?.response?.data?.message || error.message);
       console.log(error)
@@ -59,9 +61,27 @@ const Result = () => {
   }
 
   useEffect(()=>{
-    fetchProjectData()
-  },[]
+    if(user && !project.id){
+
+      fetchProjectData()
+    }else if(isLoaded && !user){
+      navigate('/')
+    }
+  },[user]
 )
+
+// fetch project every 10  seconds
+useEffect(()=>{
+
+  if(user && isGenerating){
+    const interval = setInterval(()=>{
+      fetchProjectData()
+    },10000);
+
+    return () => clearInterval(interval)
+  }
+
+},[user,isGenerating])
 
   return loading ? (
     <div className="h-screen w-full flex items-center justify-center">
@@ -125,7 +145,7 @@ const Result = () => {
                         <h3>Video Magic</h3>
                         <p>Turn this static image into a dynamic video for social media</p>
                         {!project.generatedVideo ? (
-                          <PrimaryButton onClick={handleGenerateVideo} disabled={isGenerating} className="w-full"> 
+                          <PrimaryButton onClick={handleGenerateVideo} disabled={isGenerating} className = "w-full"> 
                           {isGenerating ? (
                             <>
                             Generating video....
@@ -140,6 +160,7 @@ const Result = () => {
                           <div className="p-3 bg-green-500/10 border-green-500/20 rounded-xl text-green-400 text-center text-sm font-medium">
                             Video Generated Successfully!!
                           </div>
+                          
                         )}
                      </div>
             </div>

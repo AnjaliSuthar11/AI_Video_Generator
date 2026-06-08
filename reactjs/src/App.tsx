@@ -21,6 +21,7 @@ function App() {
 			<Navbar />
 
 			<Routes>
+
 			<Route path='/' element={<Home/>}/> 
 			<Route path='/generate' element={<Generator/>}/> 
 			<Route path='/result/:projectId' element={<Result/>}/> 
@@ -28,13 +29,14 @@ function App() {
 			{<MyGeneration/>}/>
 			<Route path='/community' element=
 			{<Community/>}/>
-			<Route path='/plans' element=
+			<Route path='/plans' element =
 			{<Plans/>}/>
 			<Route path='/loading' element=
 			{<Loading/>}/>
+
 			</Routes>
 			
-			<Footer />
+			<Footer/>
 			
 		</>
 	);

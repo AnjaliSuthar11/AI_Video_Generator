@@ -59,7 +59,7 @@ const Generator = () => {
           const formData = new FormData();
 
           formData.append('name',name)
-          formData.append('productname',productName)
+          formData.append('productName',productName)
           formData.append('productDescription',productDescription)
           formData.append('userPrompt',userPrompt)
           formData.append('aspectRatio',aspectRatio)
