@@ -123,8 +123,8 @@ if (!productName) {
         }
 
 // image to base64 structure for ai model
-const img1base64 = loadImage(images[0].path,images[0].mimeType);
-const img2base64=loadImage(images[1].path,images[1].mimeType);
+const img1base64 = loadImage(images[0].path,images[0].mimetype);
+const img2base64=loadImage(images[1].path,images[1].mimetype);
 
 const prompt= {
     text: `Combine the person and product into a realistic photo make the person naturally hold or use the product Match lighting ,shadows,scale and perspective. make the person stand in professional studio lighting.output ecommerce-quality photo realistic imagery. ${userPrompt}`
