@@ -1,7 +1,8 @@
 import {Request,Response} from "express"
 import * as Sentry from "@sentry/node"
 import { prisma } from "../configs/prisma.js";
-import {v2 as cloudinary} from 'cloudinary'
+
+import cloudinary from "../configs/cloudinary.js";
 import {GenerateContentConfig,HarmBlockThreshold,HarmCategory} from "@google/genai"
 
 import fs from "fs"
@@ -67,12 +68,28 @@ if (!productName) {
     }
     try{
 
-        let uploadedImages = await Promise.all(
-            images.map(async (item:any)=>{
-                let result = await cloudinary.uploader.upload(item.path,{resource_type: 'image'});
-                return result.secure_url
-            })
-        )
+       let uploadedImages = await Promise.all(
+  images.map(async (item: any) => {
+    try {
+      console.log("Uploading:", item.path);
+      
+      console.log("Cloudinary Config:", cloudinary.config());
+      
+      const result = await cloudinary.uploader.upload(item.path, {
+        resource_type: "image",
+      });
+
+      console.log("Upload Success:", result.secure_url);
+
+      return result.secure_url;
+    } catch (err: any) {
+      console.error("Cloudinary Upload Error");
+      console.error(err);
+
+      throw err;
+    }
+  })
+);
 
         const project = await prisma.project.create({
             data:{
@@ -91,7 +108,7 @@ if (!productName) {
 
         tempProjectId=project.id;
 
-        const model = 'gemini-3-pro-image-preview';
+       const model = 'gemini-2.5-flash-image-preview';
 
         const generationConfig : GenerateContentConfig={
             maxOutputTokens:32768,
@@ -99,7 +116,7 @@ if (!productName) {
             topP:0.95,
             responseModalities:['IMAGE'],
             imageConfig:{
-                aspectRatio:aspectRatio || '9.16',
+                aspectRatio:aspectRatio || '9:16',
                 imageSize:'1K'
             },
             safetySettings:[
@@ -192,8 +209,6 @@ res.json({projectId:project.id})
         res.status(500).json({message:error.message})
     }
 }
-
-
 export const createVideo = async (req:Request,res:Response)=>{
     const {userId}=req.auth()
     const {projectId}= req.body;
