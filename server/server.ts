@@ -12,6 +12,7 @@ import * as Sentry from "@sentry/node"
 import userRouter from './routes/userRoutes.js'
 import projectRouter from "./routes/projectRoutes.js"
 import cloudinary from './configs/cloudinary.js';
+import ai from './configs/ai.js';
 
 
 
@@ -45,51 +46,14 @@ app.use('/api/project',projectRouter)
 //this error handler must be registered before any other error middleware and after all controllers
 Sentry.setupExpressErrorHandler(app)
 
-app.get("/test-cloudinary", async (req, res) => {
+
+app.get("/models", async (req, res) => {
   try {
-    const result = await cloudinary.uploader.upload(
-      "https://res.cloudinary.com/demo/image/upload/sample.jpg",
-      {
-        resource_type: "image",
-      }
-    );
-
-    console.log(result);
-
-    res.json(result);
-  } catch (err: any) {
-    console.log("UPLOAD ERROR");
-    console.dir(err, { depth: null });
-
-    res.status(500).json({
-      message: err?.message,
-      http_code: err?.http_code,
-    });
-  }
-});
-
-app.get("/test-local-upload", async (req,res) => {
-  try {
-
-    const result =
-      await cloudinary.uploader.upload(
-        "./public/test.png",
-        {
-          resource_type:"image"
-        }
-      );
-
-    res.json(result);
-
-  } catch(err:any){
-
-    console.dir(err,{depth:null});
-
-    res.json({
-      message: err.message,
-      http_code: err.http_code
-    });
-
+    const models = await ai.models.list();
+    res.json(models);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
   }
 });
 

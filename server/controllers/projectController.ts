@@ -74,7 +74,7 @@ if (!productName) {
       console.log("Uploading:", item.path);
       
       console.log("Cloudinary Config:", cloudinary.config());
-      
+
       const result = await cloudinary.uploader.upload(item.path, {
         resource_type: "image",
       });
@@ -108,17 +108,17 @@ if (!productName) {
 
         tempProjectId=project.id;
 
-       const model = 'gemini-2.5-flash-image-preview';
+       const model = 'gemini-2.5-flash-image';
 
         const generationConfig : GenerateContentConfig={
             maxOutputTokens:32768,
             temperature:1,
             topP:0.95,
             responseModalities:['IMAGE'],
-            imageConfig:{
-                aspectRatio:aspectRatio || '9:16',
-                imageSize:'1K'
-            },
+            // imageConfig:{
+            //     aspectRatio:aspectRatio || '9:16',
+            //     imageSize:'1K'
+            // },
             safetySettings:[
                 {
     category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
@@ -148,11 +148,15 @@ const prompt= {
 }
 
 // generate the image using the ai model 
-const response : any = await ai.models.generateContent({
+const response: any = await ai.models.generateContent({
     model,
-    contents:[img1base64,img2base64,prompt],
-    config:generationConfig,
-})
+    contents: [img1base64, img2base64, prompt],
+    config: generationConfig,
+});
+
+console.log("========== GEMINI RESPONSE ==========");
+console.dir(response, { depth: null });
+console.log("=====================================");
 
 // check if the response is valid
 if(!response?.candidates?.[0]?.content?.parts){
@@ -209,6 +213,8 @@ res.json({projectId:project.id})
         res.status(500).json({message:error.message})
     }
 }
+
+
 export const createVideo = async (req:Request,res:Response)=>{
     const {userId}=req.auth()
     const {projectId}= req.body;
