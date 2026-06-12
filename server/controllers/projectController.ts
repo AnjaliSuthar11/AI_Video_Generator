@@ -108,7 +108,7 @@ if (!productName) {
 
         tempProjectId=project.id;
 
-       const model = 'gemini-3.1-flash-lite';
+       const model = 'gemini-2.5-flash-image';
 
         const generationConfig : GenerateContentConfig={
             maxOutputTokens:32768,
